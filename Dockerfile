@@ -9,11 +9,18 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
  && rm -r /var/lib/apt/lists/*
 WORKDIR /workdir/
+
+# First just resolve dependencies.
+# This creates a cached layer that can be reused
+# as long as your Package.swift/Package.resolved
+# files do not change.
+COPY ./Package.* ./
+RUN swift package resolve
+
 COPY Source Source/
 COPY Tests Tests/
-COPY Package.* ./
 
-ARG SWIFT_FLAGS="-c release -Xswiftc -static-stdlib"
+ARG SWIFT_FLAGS="-c release"
 RUN swift build $SWIFT_FLAGS
 RUN mkdir -p /executables
 RUN for executable in $(swift package completion-tool list-executables); do \
