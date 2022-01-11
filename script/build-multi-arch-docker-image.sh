@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+set -x
+
 SWIFT_VERSION=${SWIFT_VERSION:-5.5.2}
 SWIFTLINT_VERSION=${SWIFTLINT_VERSION:-$(git describe --abbrev=0)}
 BASE_DEV_IMAGE=${BASE_DEV_IMAGE:-ataias/swift:${SWIFT_VERSION}-focal}
@@ -10,7 +13,7 @@ PROD_IMAGE_LATEST=$PROD_IMAGE_PREFIX:latest
 HOST_ARM64=${HOST_ARM64:-unix:///var/run/docker.sock}
 HOST_AMD64=${HOST_AMD64:-unix:///var/run/docker.sock}
 
-cd $(git-root)
+cd $(git rev-parse --show-toplevel)
 
 # TODO use docker build instead of buildx like this
 docker --host $HOST_ARM64 \
